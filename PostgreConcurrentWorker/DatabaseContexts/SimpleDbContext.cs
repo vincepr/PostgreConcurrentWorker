@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,8 +23,25 @@ public class SimpleDbContext : DbContext
 
     private static void SeedTasks(ModelBuilder modelBuilder)
     {
+        var taskTypes = new[]
+        {
+            TaskType.Automation,
+            TaskType.SmallModelAgentTask,
+            TaskType.ExpensiveAgentTask,
+            TaskType.HumanEscalationTask,
+        };
+
+        var random = new Random(12345);
+
         modelBuilder.Entity<QueuedTask>().HasData(
-            // TODO: seed 
+            Enumerable.Range(1, 10_000)
+                .Select(i => new QueuedTask
+                {
+                    Id = i,
+                    MetaData = $"{{counter: {i}}}",
+                    Type = taskTypes[random.Next(taskTypes.Length)],
+                })
+                .ToArray()
         );
     }
 }
@@ -79,3 +96,5 @@ public enum TaskType
     /// </summary>
     HumanEscalationTask,
 }
+
+
