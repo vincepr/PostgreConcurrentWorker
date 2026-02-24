@@ -6,9 +6,6 @@ namespace PostgreConcurrentWorker.DatabaseContexts;
 
 public class SimpleDbContext : DbContext
 {
-    // note:
-    // * both SimpleDbContext(DbContextOptions opts) or SimpleDbContext(DbContext<OptionsSimpleDbContext> opts)
-    // * will work equally with with Reflection implementation of the New() of the Testing-ContextFactories.
     public SimpleDbContext(DbContextOptions options) : base(options)
     {
     }
@@ -33,16 +30,27 @@ public class SimpleDbContext : DbContext
 
         var random = new Random(12345);
 
-        modelBuilder.Entity<QueuedTask>().HasData(
-            Enumerable.Range(1, 10_000)
-                .Select(i => new QueuedTask
-                {
-                    Id = i,
-                    MetaData = $"{{counter: {i}}}",
-                    Type = taskTypes[random.Next(taskTypes.Length)],
-                })
-                .ToArray()
+        static QueuedTask CreateTask(int id, TaskType type) => new()
+        {
+            Id = id,
+            MetaData = $"{{counter: {id}}}",
+            Type = type,
+        };
+
+        var seededTasks = new List<QueuedTask>(1_000)
+        {
+            CreateTask(1, TaskType.Automation),
+            CreateTask(2, TaskType.SmallModelAgentTask),
+            CreateTask(3, TaskType.ExpensiveAgentTask),
+            CreateTask(4, TaskType.HumanEscalationTask),
+        };
+
+        seededTasks.AddRange(
+            Enumerable.Range(5, 1_000 - 4)
+                .Select(i => CreateTask(i, taskTypes[random.Next(taskTypes.Length)]))
         );
+
+        modelBuilder.Entity<QueuedTask>().HasData(seededTasks);
     }
 }
 
@@ -96,5 +104,6 @@ public enum TaskType
     /// </summary>
     HumanEscalationTask,
 }
+
 
 

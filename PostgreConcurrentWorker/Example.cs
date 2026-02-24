@@ -5,10 +5,8 @@ using TestingFixtures;
 namespace PostgreConcurrentWorker;
 
 [Parallelizable]
-public class UnitTestExample
+public class Example
 {
-
-
     [Parallelizable]
     [Test]
     public async Task Assert_FactoryIsSeededCorrectly()
@@ -16,7 +14,6 @@ public class UnitTestExample
         await using var contextFactory = await PostgresDockerContextFactory<SimpleDbContext>.NewAsync();
         await using var db = await contextFactory.CreateDbContextAsync();
         var count = await db.QueuedTasks.CountAsync();
-        Assert.That(count, Is.EqualTo(10_000));
+        Assert.That(count, Is.EqualTo(1000));
     }
-    
 }
