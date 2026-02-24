@@ -5,9 +5,9 @@ using TestingFixtures;
 
 namespace PostgreConcurrentWorker;
 
-public class SimplePostgresDockerContextFactory : PostgresDockerContextFactory<SimpleDbContext>
+public class PostgresTestContainerFactory : PostgresDockerContextFactory<SimpleDbContext>
 {
-    protected SimplePostgresDockerContextFactory(DbContextOptions<SimpleDbContext> options,
+    protected PostgresTestContainerFactory(DbContextOptions<SimpleDbContext> options,
         Func<DbContextOptions<SimpleDbContext>, SimpleDbContext> ctxFactory,
         PostgreSqlContainer postgreSqlContainer) : base(options, ctxFactory, postgreSqlContainer)
     {

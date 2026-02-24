@@ -5,7 +5,7 @@ using TestingFixtures;
 namespace PostgreConcurrentWorker;
 
 [Parallelizable]
-public class PostgresDockerBasedContextFactoryTests
+public class UnitTestExample
 {
 
 
